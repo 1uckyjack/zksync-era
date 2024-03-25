@@ -114,24 +114,24 @@ impl Keystore {
 
     fn load_json_from_file<T: for<'a> Deserialize<'a>>(filepath: String) -> anyhow::Result<T> {
         let text = std::fs::read_to_string(&filepath)
-            .with_context(|| format!("Failed reading verification key from path: {filepath}"))?;
+            .with_context(|| format!("Failed reading verification key from path: {}", filepath))
         serde_json::from_str::<T>(&text)
-            .with_context(|| format!("Failed deserializing verification key from path: {filepath}"))
+            .with_context(|| format!("Failed deserializing verification key from path: {}", filepath))
     }
     fn save_json_pretty<T: Serialize>(filepath: String, data: &T) -> anyhow::Result<()> {
         std::fs::write(&filepath, serde_json::to_string_pretty(data).unwrap())
-            .with_context(|| format!("writing to '{filepath}' failed"))
+            .with_context(|| format!("writing to '{}' failed", filepath))
     }
 
     fn load_bincode_from_file<T: for<'a> Deserialize<'a>>(filepath: String) -> anyhow::Result<T> {
         let mut file = File::open(filepath.clone())
-            .with_context(|| format!("Failed reading setup-data from path: {filepath:?}"))?;
+            .with_context(|| format!("Failed reading setup-data from path: {:?}", filepath))
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer).with_context(|| {
             format!("Failed reading setup-data to buffer from path: {filepath:?}")
         })?;
         bincode::deserialize::<T>(&buffer)
-            .with_context(|| format!("Failed deserializing setup-data at path: {filepath:?}"))
+            .with_context(|| format!("Failed deserializing setup-data at path: {:?}", filepath))
     }
 
     ///
@@ -244,7 +244,7 @@ impl Keystore {
             ProverServiceDataType::SnarkVerificationKey,
         );
         std::fs::read_to_string(&filepath)
-            .with_context(|| format!("Failed reading Snark verification key from path: {filepath}"))
+            .with_context(|| format!("Failed reading Snark verification key from path: {}", filepath))
     }
 
     pub fn save_snark_verification_key(&self, vk: ZkSyncSnarkWrapperVK) -> anyhow::Result<()> {
